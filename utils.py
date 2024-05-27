@@ -30,7 +30,6 @@ def delSudo(userID):
     SUDO_USERS.remove(int(userID))
 
 def getSudo(userID):
-    print(SUDO_USERS)
     return int(userID) in SUDO_USERS
 
 def getSudos():
