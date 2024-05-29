@@ -27,8 +27,11 @@ async def handler_start(event):
         error_message = f"hello {user_name} Welcome to AP Advertisements! I'm here to help you reach more customers with targeted ads in Telegram groups."
         return await event.respond(error_message)
     else:
-
-        pass
+ btns = [
+            Button.url("Buy bot", "https://t.me/APHACKAR"),
+            Button.url("Channel", "https://t.me/AP_SHOPPIEE"),
+            Button.url("Bot Details", "https://t.me/AP_SHOPPIEE/2282"),
+        ]
     await event.respond('Choose an option:', buttons=home_buttons)
     create_task(checkAndSaveUser(event))
 
