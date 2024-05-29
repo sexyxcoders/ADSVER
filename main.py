@@ -17,7 +17,7 @@ OWNERS.append(6907479149)
 bot = MyClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
 
-@client.on(events.NewMessage(pattern='/start'))
+@bot.on(events.NewMessage(pattern='/start'))
 async def handler_start(event):
     sender = await event.get_sender()
     user_id = event.sender_id
