@@ -17,10 +17,18 @@ OWNERS.append(6907479149)
 bot = MyClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
 
-@bot.on(events.NewMessage(pattern="/start"))
+@client.on(events.NewMessage(pattern='/start'))
 async def handler_start(event):
-    if not getSudo(event.sender_id):
-        return await event.respond("You are not a sudo user")
+    sender = await event.get_sender()
+    user_id = event.sender_id
+    user_name = sender.first_name  
+
+    if not getSudo(user_id):
+        error_message = f"{user_name} (ID: {user_id}) is not a sudo user."
+        return await event.respond(error_message)
+    else:
+
+        pass
     await event.respond('Choose an option:', buttons=home_buttons)
     create_task(checkAndSaveUser(event))
 
