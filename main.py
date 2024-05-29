@@ -24,14 +24,10 @@ async def handler_start(event):
     user_name = sender.first_name  
 
     if not getSudo(user_id):
-        error_message = f"hello {user_name} Welcome to AP Advertisements! I'm here to help you reach more customers with targeted ads in Telegram groups."
+        error_message = f"hello {user_name},Welcome to AP Advertisements! I'm here to help you reach more customers with targeted ads in Telegram groups. To know more about our bot join @ap_advertisements"
         return await event.respond(error_message)
     else:
- btns = [
-            Button.url("Buy bot", "https://t.me/APHACKAR"),
-            Button.url("Channel", "https://t.me/AP_SHOPPIEE"),
-            Button.url("Bot Details", "https://t.me/AP_SHOPPIEE/2282"),
-        ]
+pass
     await event.respond('Choose an option:', buttons=home_buttons)
     create_task(checkAndSaveUser(event))
 
