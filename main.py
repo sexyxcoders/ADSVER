@@ -28,6 +28,8 @@ async def handler_start(event):
         return await event.respond(error_message)
     else:
 
+
+    pass
     await event.respond('Choose an option:', buttons=home_buttons)
     create_task(checkAndSaveUser(event))
 
