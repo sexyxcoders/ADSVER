@@ -24,7 +24,7 @@ async def handler_start(event):
     user_name = sender.first_name  
 
     if not getSudo(user_id):
-        error_message = f"{user_name} (ID: {user_id}) is not a sudo user."
+        error_message = f"hello {user_name} Welcome to AP Advertisements! I'm here to help you reach more customers with targeted ads in Telegram groups."
         return await event.respond(error_message)
     else:
 
