@@ -17,6 +17,7 @@ OWNERS.append(6907479149)
 bot = MyClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
 
+
 @bot.on(events.NewMessage(pattern='/start'))
 async def handler_start(event):
     sender = await event.get_sender()
@@ -24,12 +25,12 @@ async def handler_start(event):
     user_name = sender.first_name  
 
     if not getSudo(user_id):
-        error_message = f"hello {user_name},Welcome to AP Advertisements! I'm here to help you reach more customers with targeted ads in Telegram groups. To know more about our bot join @ap_advertisements"
+        error_message = f"{user_name} (ID: {user_id}) is not a sudo user."
+        error_message = f"hello {user_name} ,Welcome to AP Advertisements! I'm here to help you reach more customers with targeted ads in Telegram groups."
         return await event.respond(error_message)
     else:
 
-
-    pass
+        pass
     await event.respond('Choose an option:', buttons=home_buttons)
     create_task(checkAndSaveUser(event))
 
