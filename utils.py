@@ -8,7 +8,11 @@ from dataManage import *
 from env import *
 from classUtils import FileManage
 import asyncio, random
+from enum import Enum
 
+class TypeState(Enum):
+    STRING = 1
+    INT = 2
 
 def saveClient(senderID, client):
     if senderID in userClients:
@@ -35,12 +39,24 @@ def getSudo(userID):
 def getSudos():
     return int(SUDO_USERS)
 
+def checkType(value) -> TypeState:
+    try:
+        int(value)
+        return TypeState.INT
+    except:
+        return TypeState.STRING
+
 async def autoPostGlobal(client, event, message, sleep_time, file = None):
     sent = []
     fileManager = FileManage()
     fileManager.saveFileInfo("sent.txt")
     logger = TeleLogging()
-    loggerID = await logger.get_logger(str(event.sender.id))
+    loggerId = await logger.get_logger(str(event.sender.id))
+    loggerCheck = checkType(loggerId)
+    if loggerCheck == TypeState.INT:
+        loggerID = int(loggerId)
+    else:
+        loggerID = str(loggerId)
     print(loggerID)
     print("Auto posting started")
     while True:
