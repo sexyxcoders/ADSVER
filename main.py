@@ -99,7 +99,8 @@ async def restartHandler():
     chats = await logger.chat_ids()
     for chat in chats:
         try:
-            await bot.send_message(chat, message, buttons=dmButton)
+            chatID = fixType(chat)
+            await bot.send_message(chatID, message, buttons=dmButton)
         except:
             pass
 
