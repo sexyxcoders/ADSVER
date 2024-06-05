@@ -27,3 +27,14 @@ If you're interested in using these features, just click the button below. ⬇�
 
 Thank you! 🙏
 """.strip()
+
+
+SUDO_USER_MSG = """
+HELLO **{}**! 👋
+
+I AM THE **AP ADVERTISEMENT BOT** 🤖
+
+As a valued **SUDO USER**, you have exclusive access to all our advanced features. 🌟
+
+Use the buttons below to manage and optimize your experience with the bot. 👇
+""".strip()
