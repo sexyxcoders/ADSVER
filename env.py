@@ -10,9 +10,20 @@ debug_channel_id = "@channelforsavingcontent"
 
 
 NOT_SUDO_AD = """
-HELLO `{}` I AM THE AP ADVERTISEMENT BOT.
-AS YOU ARE NOT A SUDO USER YOU CAN'T USE ME.
-I HAVE MULTIPLE FEATURES LIKE AUTO POST, AUTO GROUP JOINER, ANTI BAN / ANTI FLOOD.
-YOU CAN USE ME BY PAYING A SMALL AMOUNT.
-IF YOU WANT TO USE ME CLICK THE BUTTON BELOW.
+HELLO `{}`! 👋
+
+I AM THE **AP ADVERTISEMENT BOT** 🤖.
+
+🌟 **FEATURES** 🌟
+- AUTO POST 📝
+- AUTO GROUP JOINER 👥
+- ANTI BAN / ANTI FLOOD 🚫💧
+
+As you are not a **SUDO USER**, you don't have access to these features. 😔
+
+But don't worry! You can unlock all these amazing features by paying a small amount. 💸
+
+If you're interested in using these features, just click the button below. ⬇️
+
+Thank you! 🙏
 """.strip()

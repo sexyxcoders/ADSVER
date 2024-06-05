@@ -3,7 +3,7 @@
 # ©️2024 LEGENDX22
 from telethon.errors import FloodWaitError
 from telethon.sessions import StringSession
-from telethon import TelegramClient
+from telethon import TelegramClient, Button
 from dataManage import *
 from env import *
 from classUtils import FileManage
@@ -44,6 +44,8 @@ def fixType(value):
         return x
 
 async def autoPostGlobal(client, event, message, sleep_time, file = None):
+    if int(sleep_time) < 15:
+        sleep_time = 15
     sent = []
     fileManager = FileManage()
     fileManager.saveFileInfo("sent.txt")
@@ -139,11 +141,23 @@ async def sessionSort(senderID):
 
 
 
+async def setSudo(OWNERS):
+    sudoManager = TeleSudo()
+    sudos = await sudoManager.get_sudos()
+    for sudo in OWNERS:
+        saveSudo(sudo)
+    for sudo in sudos:
+        saveSudo(sudo)
 
-
-
-
-
-
-
-
+async def alert_owners(bot):
+    message = "Hey, The bot has been restarted.\n__Please use DM button to interact with me!__"
+    logger = TeleLogging()
+    await bot.getMe()
+    dmButton = Button.url('DM', 'https://t.me/{}'.format(bot.me.username))
+    chats = await logger.chat_ids()
+    for chat in chats:
+        try:
+            chatID = fixType(chat)
+            await bot.send_message(chatID, message, buttons=dmButton)
+        except:
+            pass

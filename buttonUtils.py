@@ -63,7 +63,7 @@ startButton = [
 ]
 
 sessionToDbButton = [
-    [Button.inline('ꜱᴀᴠᴇ ᴛᴏ ᴅʙ 🚀', b'sessionSetToDb'), Button.inline('New Session', b'new_session')],
+    [Button.inline('ꜱᴀᴠᴇ ᴛᴏ ᴅʙ 🚀', b'sessionSetToDb'), Button.inline('ɴᴇᴡ ꜱᴇꜱꜱɪᴏɴ 🔮', b'new_session')],
     [Button.inline('ʙᴀᴄᴋ ⬅️', b'back')]
 ]
 
@@ -73,6 +73,6 @@ sessionToOtpButton = [
 ]
 
 notSudoButtons = [
-    Button.url("TUTORIAL 🚀", "https://t.me/ap_advertisements"),
-    Button.url("DM ME 📩", "https://t.me/APHACKAR"),
+    Button.url("ᴛᴜᴛᴏʀɪᴀʟ ⚜️", "https://youtu.be/dxes9q4e6WQ"),
+    Button.url("ᴅᴍ ᴍᴇ 📩", "https://t.me/APHACKAR"),
 ]

@@ -276,7 +276,7 @@ async def check_sessions(event):
 
 async def joinchat(event):
     if not getSudo(event.sender.id):
-        return await event.respond(NOT_SUDO_AD.format(event.sender.first_name, buttons = notSudoButtons))
+        return await event.respond(NOT_SUDO_AD.format(event.sender.first_name), buttons = notSudoButtons)
     total_clients = getClients(event.sender.id)
     if len(total_clients) == 0:
         await event.edit('No sessions found. Please save a session or start the bot first.', buttons=saveOrStart)
@@ -331,7 +331,7 @@ async def client_join_chat(event):
 
 async def auto_posting(event):
     if not getSudo(event.sender.id):
-        return await event.respond(NOT_SUDO_AD.format(event.sender.first_name, buttons = notSudoButtons))
+        return await event.respond(NOT_SUDO_AD.format(event.sender.first_name), buttons = notSudoButtons)
     total_clients = getClients(event.sender.id)
     if len(total_clients) == 0:
         await event.edit('No sessions found. Please save a session or start the bot first.', buttons=saveOrStart)
@@ -340,7 +340,7 @@ async def auto_posting(event):
 
 async def autopost(event):
     if not getSudo(event.sender.id):
-        return await event.respond(NOT_SUDO_AD.format(event.sender.first_name, buttons = notSudoButtons))
+        return await event.respond(NOT_SUDO_AD.format(event.sender.first_name), buttons = notSudoButtons)
     adManager = TeleAds()
     user_ads = await adManager.get_all_ads(str(event.sender.id))
     if user_ads:

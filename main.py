@@ -20,7 +20,7 @@ bot = MyClient('bot', api_id, api_hash).start(bot_token=bot_token)
 @bot.on(events.NewMessage(pattern="/start"))
 async def handler_start(event):
     if not getSudo(event.sender_id):
-        return await event.respond(NOT_SUDO_AD.format(event.sender.first_name, buttons = notSudoButtons))
+        return await event.respond(NOT_SUDO_AD.format(event.sender.first_name), buttons = notSudoButtons)
     await event.respond('Choose an option:', buttons=home_buttons)
     create_task(checkAndSaveUser(event))
 
@@ -86,24 +86,8 @@ async def handler(event):
     await event.edit(buttons = home_buttons)
 
 async def restartHandler():
-    sudoManager = TeleSudo()
-    sudos = await sudoManager.get_sudos()
-    for sudo in OWNERS:
-        saveSudo(sudo)
-    for sudo in sudos:
-        saveSudo(sudo)
-    message = "Hey, The bot has been restarted.\n__Please use DM button to interact with me!__"
-    logger = TeleLogging()
-    await bot.getMe()
-    dmButton = Button.url('DM', 'https://t.me/{}'.format(bot.me.username))
-    chats = await logger.chat_ids()
-    for chat in chats:
-        try:
-            chatID = fixType(chat)
-            await bot.send_message(chatID, message, buttons=dmButton)
-        except:
-            pass
-
+    await setSudo(OWNERS)
+    await alert_owners(bot)
 
 def add_callback_event_handlers(CallBacks: dict):
     for eventFunction, eventData in CallBacks.items():
@@ -134,7 +118,7 @@ all_events = {
     sessionSetToDb: b'sessionSetToDb'
 }
 
-add_callback_event_handlers(all_events)
 print('Bot started')
+add_callback_event_handlers(all_events)
 bot.loop.run_until_complete(restartHandler())
 bot.run_until_disconnected()
