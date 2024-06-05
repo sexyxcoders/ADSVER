@@ -239,7 +239,7 @@ async def start_bots(event):
     sessionManage = TeleSession()
     total_sessions = await sessionManage.get_sessions(event.sender.id)
     if not total_sessions:
-        await event.edit('No sessions found. Please save a session first.', buttons = saveOrStart)
+        await event.edit('No active sessions found. Please save a session first.', buttons = saveOrStart)
         return
     for x in total_sessions:
         try:
