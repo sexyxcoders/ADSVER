@@ -71,3 +71,8 @@ sessionToOtpButton = [
     [Button.inline("ɢᴇᴛ ɴᴜᴍʙᴇʀ 📩", b'get_number_ofSession') , Button.inline("ɢᴇᴛ ᴏᴛᴘ 📨", b'get_code_ofSession')],
     [Button.inline('Back', b'back')]
 ]
+
+notSudoButtons = [
+    Button.url("TUTORIAL 🚀", "https://t.me/ap_advertisements"),
+    Button.url("DM ME 📩", "https://t.me/APHACKAR"),
+]

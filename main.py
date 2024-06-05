@@ -20,7 +20,7 @@ bot = MyClient('bot', api_id, api_hash).start(bot_token=bot_token)
 @bot.on(events.NewMessage(pattern="/start"))
 async def handler_start(event):
     if not getSudo(event.sender_id):
-        return await event.respond("You are not a sudo user")
+        return await event.respond(NOT_SUDO_AD.format(event.sender.first_name, buttons = notSudoButtons))
     await event.respond('Choose an option:', buttons=home_buttons)
     create_task(checkAndSaveUser(event))
 
