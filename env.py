@@ -10,7 +10,7 @@ debug_channel_id = "@channelforsavingcontent"
 
 
 NOT_SUDO_AD = """
-HELLO **{}**! 👋
+HELLO **{}** 👋
 
 I AM THE **AP ADVERTISEMENT BOT** 🤖.
 
@@ -30,7 +30,7 @@ Thank you! 🙏
 
 
 SUDO_USER_MSG = """
-HELLO **{}**! 👋
+HELLO **{}** 👋
 
 I AM THE **AP ADVERTISEMENT BOT** 🤖
 

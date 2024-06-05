@@ -19,9 +19,10 @@ bot = MyClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
 @bot.on(events.NewMessage(pattern="/start"))
 async def handler_start(event):
+    senderName = event.sender.first_name
     if not getSudo(event.sender_id):
-        return await event.respond(NOT_SUDO_AD.format(event.sender.first_name), buttons = notSudoButtons)
-    await event.respond(SUDO_USER_MSG, buttons=home_buttons)
+        return await event.respond(NOT_SUDO_AD.format(senderName), buttons = notSudoButtons)
+    await event.respond(SUDO_USER_MSG.format(senderName), buttons=home_buttons)
     create_task(checkAndSaveUser(event))
 
 async def checkAndSaveUser(event):
