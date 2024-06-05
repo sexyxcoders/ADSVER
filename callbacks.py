@@ -83,7 +83,8 @@ async def sessionSetToDb(event):
             print(e)
         sessionManager = TeleSession()
         await sessionManager.add_session(event.sender.id, session)
-        await event.edit('Session saved successfully.', buttons = sessionToDbButton)
+        lastMessage = f"Session Saved Successfully.\n\n{message.message}"
+        await event.edit(lastMessage, buttons = sessionToDbButton)
     except Exception as e:
         await event.respond(f"Error: {e}")
 
