@@ -140,6 +140,14 @@ class TeleLogging:
             if "chatID" in document:
                 chat_ids.append(document["chatID"])
         return chat_ids
+    
+    async def delete_logger(self, userID: str):
+        check = await collection.find_one({"_id": userID})
+        if check:
+            await collection.update_one({"_id": userID}, {"$unset": {"chatID": ""}})
+        else:
+            return False
+
 
 class TeleSudo:
     def __init__(self) -> None:

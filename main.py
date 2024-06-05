@@ -63,8 +63,10 @@ async def handler_delsudo(event):
         await event.respond("Please send me the Telegram ID")
         return
     sudoManage = TeleSudo()
+    logger = TeleLogging()
     await sudoManage.delete_sudo(userID)
     delSudo(userID)
+    await logger.delete_logger(userID)
     await event.respond(f"Deleted {userID} from sudo")
 
 @bot.on(events.NewMessage(pattern="/getsudo"))
