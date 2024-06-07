@@ -325,6 +325,7 @@ async def client_join_chat(event):
                 break
             except Exception as e:
                 await event.respond(f'Error: {e}')
+                continue
         else:
             continue
     print("work done!")
