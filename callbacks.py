@@ -285,6 +285,23 @@ async def joinchat(event):
     buttons = await joinchat_buttons(total_clients)
     await event.edit('Choose a bot:', buttons=buttons)
 
+async def join_private_chat(client, link, event):
+    try:
+        await client(ImportChatInviteRequest(link))
+    except FloodWaitError as e:
+        await event.respond(f'Flood wait of {e.seconds} seconds.\nYou dont have to do anything. I will try again after {e.seconds} seconds.')
+        await asyncio.sleep(e.seconds)
+    except Exception as e:
+        await event.respond(f'Error: `{e}`')
+
+async def join_public_chat(client, link, event):
+    try:
+        await client(JoinChannelRequest(link))
+    except FloodWaitError as e:
+        await event.respond(f'Flood wait of {e.seconds} seconds.\nYou dont have to do anything. I will try again after {e.seconds} seconds.')
+        await asyncio.sleep(e.seconds)
+    except Exception as e:
+        await event.respond(f'Error: `{e}`')
 
 async def client_join_chat(event):
     global chat_link
@@ -292,6 +309,7 @@ async def client_join_chat(event):
     client_id = int(data.split('_')[1])
     clients = getClients(event.sender.id)
     chat_link = ""
+    await event.edit('Joining Please Wait...')
     async with event.client.conversation(event.chat_id) as conv:
         await conv.send_message('Send the chat link here.\nPublic chats ex. @chatname\nPrivate chats ex. https://t.me/+xxx.\nMultiple chats can be sent by separating them with new line.')
         response = await conv.get_response()
@@ -307,18 +325,18 @@ async def client_join_chat(event):
                     for link in total_links:
                         if "+" in link:
                             new_link = link.split('+')[1]
-                            await client(ImportChatInviteRequest(new_link))
+                            await join_private_chat(client, new_link, event)
                             await event.client.send_message(telegram_database_chat, f"Client Name: {cl_id.first_name}\nClient ID: {cl_id.id}\nChat Link: {new_link}")
                         else:
-                            await client(JoinChannelRequest(link))
+                            await join_public_chat(client, link, event)
                             await event.client.send_message(telegram_database_chat, f"Client Name: {cl_id.first_name}\nClient ID: {cl_id.id}\nChat Link: {link}")
                 else:
                     if "+" in chat_link:
                         new_link = chat_link.split('+')[1]
-                        await client(ImportChatInviteRequest(new_link))
+                        await join_private_chat(client, new_link, event)
                         await event.client.send_message(telegram_database_chat, f"Client Name: {cl_id.first_name}\nClient ID: {cl_id.id}\nChat Link: {new_link}")
                     else:
-                        await client(JoinChannelRequest(chat_link))
+                        await join_public_chat(client, link, event)
                         await event.client.send_message(telegram_database_chat, f"Client Name: {cl_id.first_name}\nClient ID: {cl_id.id}\nChat Link: {chat_link}")
                 await event.delete()
                 await event.respond(f'{cl_id.first_name} joined the chat.', buttons=work_btns)
