@@ -68,7 +68,7 @@ async def autoPostGlobal(client, event, message, sleep_time, file = None):
                     await client.send_message(dialog.id, message, file = file)
                     print(f"Message sent to {dialog.title} from {(await client.get_me()).first_name}")
                     sent.append(dialog.title)
-                    await asyncio.sleep(5)
+                    await asyncio.sleep(1)
                 except FloodWaitError as e:
                     await asyncio.sleep(e.seconds)
                     continue
