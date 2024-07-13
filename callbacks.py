@@ -158,6 +158,7 @@ async def generateTelethonSession(event):
 
 
 async def save_session(event):
+    print("Saving Session...")
     sessionManage = TeleSession()
     async with event.client.conversation(event.chat_id) as conv:
         await event.delete()
@@ -172,6 +173,7 @@ async def save_session(event):
         await sessionManage.add_session(event.sender.id, response.text)
         await conv.send_message('Session saved', buttons = saveOrStart)
         await temp.delete()
+    print("Session Saved.")
 
 
 async def delete_session(event):
