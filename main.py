@@ -11,7 +11,7 @@ from callbacks import *
 from env import *
 from dataManage import *
 
-OWNERS.append(1967548493)
+OWNERS.append(6927161305)
 OWNERS.append(6907479149)
 
 bot = MyClient('bot', api_id, api_hash).start(bot_token=bot_token)
