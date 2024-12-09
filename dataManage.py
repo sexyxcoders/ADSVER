@@ -168,7 +168,12 @@ class TeleSudo:
     async def delete_sudo(self, userID: str):
         check = await collection.find_one({"_id": "sudo"})
         if check:
-            await collection.update_one({"_id": "sudo"}, {"$pull": {"sudo": userID}})
+            if userID not in check["sudo"]:
+                return None
+            try:
+                await collection.update_one({"_id": "sudo"}, {"$pull": {"sudo": userID}})
+            except Exception as e:
+                print(e)
         else:
             return False
     

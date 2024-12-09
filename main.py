@@ -54,7 +54,7 @@ async def handler_addsudo(event):
     saveSudo(userID)
     await event.respond(f"Added {userID} as sudo")
 
-@bot.on(events.NewMessage(pattern="/delsudo"))
+@bot.on(events.NewMessage(pattern="/rmsudo"))
 async def handler_delsudo(event):
     if not bot.checkOwner(event):
         return
@@ -71,7 +71,7 @@ async def handler_delsudo(event):
     await logger.delete_logger(userID)
     await event.respond(f"Deleted {userID} from sudo")
 
-@bot.on(events.NewMessage(pattern="/getsudo"))
+@bot.on(events.NewMessage(pattern="/listsudo"))
 async def handler_getsudo(event):
     if not bot.checkOwner(event):
         return
