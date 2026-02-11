@@ -74,3 +74,6 @@ notSudoButtons = [
 
 # ---------------- SESSION TO OTP BUTTON ---------------- #
 sessionToOtpButton = Button.inline('Send OTP', b'session_to_otp')  # Define this missing button
+
+# ---------------- SESSION TO DB BUTTON ---------------- #
+sessionToDbButton = Button.inline('Save to Database', b'session_to_db')  # Define the missing button
