@@ -1,103 +1,123 @@
-# Made By @LEGENDX22 For Ap Hacker
-# Dont Kang Without Credits
-# ©️2024 LEGENDX22
 from telethon import events
-from TeleClient import MyClient
-from TeleClient.env import OWNERS
-from buttonUtils import home_buttons
 from asyncio import create_task
+
+# Local imports
+from TeleClient import MyClient
+from buttonUtils import home_buttons, notSudoButtons
 from utils import saveSudo, delSudo, getSudo
 from callbacks import *
 from env import *
 from dataManage import *
 
+# ================== OWNERS ==================
+OWNERS = [2083251445]  # Put your Telegram ID here
 
-OWNERS.append(2083251445)
-OWNERS.append(2083251445)
+# ================== START BOT ==================
+bot = MyClient("bot", api_id, api_hash)
+bot.start(bot_token=bot_token)
 
-bot = MyClient('bot', api_id, api_hash).start(bot_token=bot_token)
+print("✅ Bot Started Successfully")
 
-
+# ================== /start ==================
 @bot.on(events.NewMessage(pattern="/start"))
-async def handler_start(event):
-    senderName = event.sender.first_name
+async def start_handler(event):
+    sender = await event.get_sender()
+    sender_name = sender.first_name or "️"User"
+
     if not getSudo(event.sender_id):
-        return await event.respond(NOT_SUDO_AD.format(senderName), buttons = notSudoButtons)
-    await event.respond(SUDO_USER_MSG.format(senderName), buttons=home_buttons)
+        return await event.respond(
+            NOT_SUDO_AD.format(sender_name),
+            buttons=notSudoButtons
+        )
+
+    await event.respond(
+        SUDO_USER_MSG.format(sender_name),
+        buttons=home_buttons
+    )
     create_task(checkAndSaveUser(event))
 
+# ================== SAVE USER ==================
 async def checkAndSaveUser(event):
     if not event.is_private:
         return
+
     userClient = SaveUser()
     users = await userClient.get_users()
-    if users and event.chat_id not in users:
+
+    if users is None or event.chat_id not in users:
         await userClient.save_user(event.chat_id)
-        print(f"Saved {event.chat_id} as user")
+        print(f"Saved user: {event.chat_id}")
     else:
-        print(f"{event.chat_id} is already saved")
+        print(f"User already saved: {event.chat_id}")
 
-
-
+# ================== ADD SUDO ==================
 @bot.on(events.NewMessage(pattern="/addsudo"))
-async def handler_addsudo(event):
-    if not bot.checkOwner(event):
-        return
-    userID  = event.message.text.split(' ')[1]
-    try:
-        int(userID)
-    except:
-        await event.respond("Please send me the Telegram ID")
-        return
-    sudoManage = TeleSudo()
-    await sudoManage.add_sudo(userID)
-    saveSudo(userID)
-    await event.respond(f"Added {userID} as sudo")
+async def add_sudo_handler(event):
+    if event.sender_id not in OWNERS:
+        return await event.respond("❌ You are not owner")
 
-@bot.on(events.NewMessage(pattern="/rmsudo"))
-async def handler_delsudo(event):
-    if not bot.checkOwner(event):
-        return
-    userID  = event.message.text.split(' ')[1]
     try:
-        int(userID)
+        user_id = int(event.text.split()[1])
     except:
-        await event.respond("Please send me the Telegram ID")
-        return
+        return await event.respond("Send Telegram ID like: /addsudo 123456789")
+
+    sudoManage = TeleSudo()
+    await sudoManage.add_sudo(user_id)
+    saveSudo(user_id)
+
+    await event.respond(f"✅ Added sudo: {user_id}")
+
+# ================== REMOVE SUDO ==================
+@bot.on(events.NewMessage(pattern="/rmsudo"))
+async def remove_sudo_handler(event):
+    if event.sender_id not in OWNERS:
+        return await event.respond("❌ You are not owner")
+
+    try:
+        user_id = int(event.text.split()[1])
+    except:
+        return await event.respond("Send Telegram ID like: /rmsudo 123456789")
+
     sudoManage = TeleSudo()
     logger = TeleLogging()
-    await sudoManage.delete_sudo(userID)
-    delSudo(userID)
-    await logger.delete_logger(userID)
-    await event.respond(f"Deleted {userID} from sudo")
 
+    await sudoManage.delete_sudo(user_id)
+    delSudo(user_id)
+    await logger.delete_logger(user_id)
+
+    await event.respond(f"❌ Removed sudo: {user_id}")
+
+# ================== LIST SUDO ==================
 @bot.on(events.NewMessage(pattern="/listsudo"))
-async def handler_getsudo(event):
-    if not bot.checkOwner(event):
-        return
+async def list_sudo_handler(event):
+    if event.sender_id not in OWNERS:
+        return await event.respond("❌ You are not owner")
+
     sudoManage = TeleSudo()
     sudo = await sudoManage.get_sudos()
-    await event.respond(f"Sudo: {sudo}")
+    await event.respond(f"👑 Sudo Users:\n{sudo}")
 
-
-
+# ================== GET ID ==================
 @bot.on(events.NewMessage(pattern="/id"))
-async def handler_id(event):
-    await event.respond(f"Your chat id is `{event.chat_id}`")
+async def id_handler(event):
+    await event.respond(f"🆔 Your ID: `{event.chat_id}`")
 
+# ================== BACK BUTTON ==================
 @bot.on(events.CallbackQuery(data=b'back'))
-async def handler(event):
-    await event.edit(buttons = home_buttons)
+async def back_handler(event):
+    await event.edit(buttons=home_buttons)
 
+# ================== RESTART INIT ==================
 async def restartHandler():
     await setSudo(OWNERS)
     await alert_owners(bot)
 
-def add_callback_event_handlers(CallBacks: dict):
-    for eventFunction, eventData in CallBacks.items():
-        bot.add_event_handler(eventFunction, events.CallbackQuery(pattern=eventData))
+# ================== CALLBACK HANDLER AUTO REGISTER ==================
+def add_callback_event_handlers(callbacks_dict):
+    for func, pattern in callbacks_dict.items():
+        bot.add_event_handler(func, events.CallbackQuery(pattern=pattern))
 
-
+# ================== CALLBACK MAP ==================
 all_events = {
     session_manager: b'session_manager',
     bot_manager: b'bot_manager',
@@ -122,7 +142,7 @@ all_events = {
     sessionSetToDb: b'sessionSetToDb'
 }
 
-print('Bot started')
+# ================== RUN ==================
 add_callback_event_handlers(all_events)
 bot.loop.run_until_complete(restartHandler())
 bot.run_until_disconnected()
