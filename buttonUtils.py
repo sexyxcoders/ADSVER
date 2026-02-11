@@ -49,11 +49,11 @@ stopButton = [[Button.inline('🛑 Stop Bots', b'stop_bots')]]
 # ---------------- DYNAMIC BUTTONS ---------------- #
 async def joinchat_buttons(clients):
     buttons = []
-    for client in clients[:10]:
+    for client in clients[:10]:  # Limiting to the first 10 clients
         try:
             me = await client.get_me()
-            data = f"join_{me.id}".encode()
-            buttons.append([Button.inline(f'{me.first_name[:15]}', data)])
+            data = f"join_{me.id}".encode()  # Ensure data is in bytes
+            buttons.append([Button.inline(f'{me.first_name[:15]}', data)])  # Truncate names if too long
         except:
             continue
     buttons.append([Button.inline('⬅️ Back', b'back')])
@@ -61,9 +61,9 @@ async def joinchat_buttons(clients):
 
 def autoPost_buttons(user_ads):
     buttons = []
-    for ad_name in user_ads[:8]:
-        data = f"ad_{ad_name}".encode()
-        buttons.append([Button.inline(ad_name[:20], data)])
+    for ad_name in user_ads[:8]:  # Limiting to the first 8 ads
+        data = f"ad_{ad_name}".encode()  # Ensure data is in bytes
+        buttons.append([Button.inline(ad_name[:20], data)])  # Truncate ad name if too long
     buttons.append([Button.inline('⬅️ Back', b'back')])
     return buttons
 
