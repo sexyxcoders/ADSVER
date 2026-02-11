@@ -1,5 +1,5 @@
 from telethon import TelegramClient
-from TeleClient.env import OWNERS
+from .env import OWNERS
 
 class MyClient(TelegramClient):
     
