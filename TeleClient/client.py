@@ -1,4 +1,10 @@
 from telethon import TelegramClient
+from TeleClient.env import OWNERS
 
 class MyClient(TelegramClient):
-    pass
+    
+    async def getMe(self):
+        return await self.get_me()
+
+    def checkOwner(self, event):
+        return event.sender_id in OWNERS
