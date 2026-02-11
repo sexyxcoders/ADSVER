@@ -1,6 +1,16 @@
 from telethon import TelegramClient
 from .env import OWNERS
 
+from telethon import TelegramClient
+
+class MyClient(TelegramClient):
+
+    async def init_me(self):
+        self.me = await self.get_me()
+
+    async def checkCancel(self, text):
+        return str(text).lower() in ["cancel", "stop", "/cancel", "exit"]
+
 class MyClient(TelegramClient):
     
     async def getMe(self):
