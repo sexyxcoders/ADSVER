@@ -8,3 +8,8 @@ class MyClient(TelegramClient):
 
     def checkOwner(self, event):
         return event.sender_id in OWNERS
+
+async def start(self, *args, **kwargs):
+    await super().start(*args, **kwargs)
+    self.me = await self.get_me()
+    return self
