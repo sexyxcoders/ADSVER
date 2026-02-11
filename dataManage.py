@@ -40,6 +40,15 @@ class TeleSession:
         allData = await collection.find_one({"userID": userID})
         return allData.get("sessions", None) if allData else None
 
+# Inside dataManage.py
+
+# Assuming userClients is a dictionary that stores user-client data
+userClients = {}
+
+def getClients(senderID):
+    """Retrieve all clients for a given user."""
+    return userClients.get(senderID, [])
+
 # ============================ TELECHATLINKS CLASS ============================ #
 class TeleChatLinks:
     def __init__(self) -> None:
