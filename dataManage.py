@@ -40,14 +40,6 @@ class TeleSession:
         allData = await collection.find_one({"userID": userID})
         return allData.get("sessions", None) if allData else None
 
-# Inside dataManage.py
-
-# Assuming userClients is a dictionary that stores user-client data
-userClients = {}
-
-def getClients(senderID):
-    """Retrieve all clients for a given user."""
-    return userClients.get(senderID, [])
 
 # ============================ TELECHATLINKS CLASS ============================ #
 class TeleChatLinks:
@@ -79,6 +71,7 @@ class TeleChatLinks:
         """Get all chat links for a user."""
         allData = await collection.find_one({"userID": userID})
         return allData.get("chats", None) if allData else None
+
 
 # ============================ TELEADS CLASS ============================ #
 class TeleAds:
@@ -127,6 +120,7 @@ class TeleAds:
             return self.rm_data(check, delete_keys)
         return None
 
+
 # ============================ TELELOGGING CLASS ============================ #
 class TeleLogging:
     def __init__(self) -> None:
@@ -164,6 +158,7 @@ class TeleLogging:
             return True
         return False
 
+
 # ============================ TELESUDO CLASS ============================ #
 class TeleSudo:
     def __init__(self) -> None:
@@ -194,28 +189,6 @@ class TeleSudo:
             return [int(sudo) for sudo in check["sudo"]]
         return []
 
-# Inside dataManage.py
-
-# Example of saving a sudo user (could be saving to a database or memory)
-SUDO_USERS = []
-
-def saveSudo(userID):
-    """Save a user as a sudo."""
-    if userID not in SUDO_USERS:
-        SUDO_USERS.append(userID)
-
-def delSudo(userID):
-    """Remove a user from sudo list."""
-    if userID in SUDO_USERS:
-        SUDO_USERS.remove(userID)
-
-def getSudo(userID):
-    """Check if a user is a sudo."""
-    return userID in SUDO_USERS
-
-def getSudos():
-    """Return the list of sudo users."""
-    return SUDO_USERS
 
 # ============================ TELESAVEUSER CLASS ============================ #
 class SaveUser:
