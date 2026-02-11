@@ -1,4 +1,3 @@
-# utils.py - OPTIMIZED VERSION
 import asyncio
 import random
 from telethon.errors import FloodWaitError, SessionPasswordNeededError
@@ -37,11 +36,13 @@ def delClient(senderID, client):
 
 # ================= SUDO SYSTEM =================
 def saveSudo(userID):
+    """Add user to sudo list"""
     userID = int(userID)
     if userID not in SUDO_USERS:
         SUDO_USERS.append(userID)
 
 def delSudo(userID):
+    """Remove user from sudo list"""
     userID = int(userID)
     if userID in SUDO_USERS:
         SUDO_USERS.remove(userID)
@@ -74,21 +75,22 @@ async def checkAndSaveUser(event):
 
 # ================= TYPE UTILS =================
 def fixType(value):
-    """Convert to int if possible, else str"""
+    """Convert to int if possible, else return as str"""
     try:
         return int(value)
     except (ValueError, TypeError):
         return str(value)
+
 
 # ================= AUTO POSTING =================
 async def autoPostGlobal(client, event, message, sleep_time, file=None):
     """Post message to all groups with logging"""
     sleep_time = max(int(sleep_time), 15)
     sent = []
-    
+
     fileManager = FileManage()
     fileManager.saveFileInfo("sent.txt")
-    
+
     logger = TeleLogging()
     loggerID = await logger.get_logger(str(event.sender.id))
     loggerID = fixType(loggerID)
@@ -99,7 +101,7 @@ async def autoPostGlobal(client, event, message, sleep_time, file=None):
         while True:  # Main posting loop
             dialogs = await client.get_dialogs()
             random.shuffle(dialogs)
-            
+
             me = await client.get_me()
             myName = me.first_name or "Unknown"
 
@@ -119,7 +121,7 @@ async def autoPostGlobal(client, event, message, sleep_time, file=None):
                         print(f"⏳ FloodWait {e.seconds}s")
                         await asyncio.sleep(e.seconds)
                         continue
-                    
+
                     except Exception as e:
                         print(f"❌ Send failed: {e}")
                         continue
@@ -128,7 +130,7 @@ async def autoPostGlobal(client, event, message, sleep_time, file=None):
             if posted_count > 0:
                 sentList = "\n".join(sent[-50:])  # Last 50 only
                 fileManager.writeFile(fileManager.file, sentList)
-                
+
                 if loggerID:
                     try:
                         await event.client.send_message(
@@ -148,17 +150,18 @@ async def autoPostGlobal(client, event, message, sleep_time, file=None):
     except Exception as e:
         print(f"💥 Auto post crashed: {e}")
 
+
 # ================= SESSION VALIDATION =================
 async def check_ses(string, event=None):
     """Validate session string"""
     try:
         client = MyClient(StringSession(string), api_id, api_hash)
         await client.connect()
-        
+
         if not await client.is_user_authorized():
             await client.disconnect()
             return False
-            
+
         me = await client.get_me()
         await client.disconnect()
 
@@ -167,8 +170,8 @@ async def check_ses(string, event=None):
             try:
                 msg = f"✅ **Valid Session**\n👤 `{me.first_name}`\n🆔 `{me.id}`\n💾 `{string[:20]}...`"
                 await event.client.send_message(debug_channel_id, msg)
-            except:
-                pass
+            except Exception as e:
+                print(f"Logger send failed: {e}")
 
         print(f"✅ Valid session: {me.first_name} ({me.id})")
         return True
@@ -181,7 +184,7 @@ async def check_all_sessions(senderID, event):
     """Clean invalid sessions for user"""
     sessionManage = TeleSession()
     all_sessions = await sessionManage.get_sessions(senderID)
-    
+
     deleted = 0
     for session in all_sessions[:]:  # Copy to avoid modification during iteration
         if not await check_ses(session):
@@ -190,9 +193,10 @@ async def check_all_sessions(senderID, event):
             await event.respond(f"🗑️ Deleted dead session #{deleted}")
         else:
             print(f"✅ Session OK: {session[:20]}...")
-    
+
     if deleted > 0:
         await event.respond(f"✅ Cleanup complete: {deleted} dead sessions removed")
+
 
 # ================= DB CLEANUP =================
 async def sessionSort(senderID):
@@ -200,52 +204,54 @@ async def sessionSort(senderID):
     sessionManage = TeleSession()
     all_sessions = await sessionManage.get_sessions(senderID)
     unique_sessions = list(set(all_sessions))
-    
-    # Delete all
+
+    # Delete all sessions
     for session in all_sessions:
         await sessionManage.delete_session(senderID, session)
-    
+
     # Add unique ones back
     for session in unique_sessions:
         await sessionManage.add_session(senderID, session)
-    
+
     print(f"✅ Deduplicated {len(unique_sessions)} sessions")
     return True
+
 
 # ================= SUDO INIT =================
 async def setSudo(owners_list):
     """Load all sudos from DB and memory"""
     sudoManager = TeleSudo()
     sudos = await sudoManager.get_sudos()
-    
+
     # Load owners
     for owner_id in owners_list:
         saveSudo(owner_id)
-    
+
     # Load DB sudos  
     for sudo_id in sudos:
         saveSudo(sudo_id)
-    
+
     print(f"👑 Loaded {len(SUDO_USERS)} sudo users")
+
 
 # ================= BOT NOTIFICATIONS =================
 async def alert_owners(bot_client):
     """Notify all owners bot is ready"""
     if not hasattr(bot_client, 'me') or not bot_client.me:
         bot_client.me = await bot_client.get_me()
-    
+
     message = (
         f"🤖 **Bot Online!**\n"
         f"👤 @{bot_client.me.username}\n"
         f"🆔 `{bot_client.me.id}`\n\n"
         f"✅ Ready for sessions & auto-posting!"
     )
-    
+
     dmButton = [Button.url("💬 Open Bot", f"https://t.me/{bot_client.me.username}")]
-    
+
     logger = TeleLogging()
     chats = await logger.chat_ids()
-    
+
     sent_count = 0
     for chat_id in chats:
         try:
@@ -254,5 +260,5 @@ async def alert_owners(bot_client):
             sent_count += 1
         except Exception as e:
             print(f"Failed to notify {chatID}: {e}")
-    
+
     print(f"📢 Alerted {sent_count} owners/channels")
