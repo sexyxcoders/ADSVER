@@ -1,12 +1,12 @@
 clients = []
 userClients = {}
 SUDO_USERS = []
-api_id = 1621727
-api_hash = "31350903c528876f79527398c09660ce"
-bot_token = "7163325940:AAG6EqYkwvfbpZiq8ME9Rbvp4U9VCHhr4DQ"
-MONGO_URI = "mongodb+srv://aphackerff_db_user:YUMvtyOJlNmWIOtK@cluster0.tljshns.mongodb.net/?appName=Cluster0 "
-telegram_database_chat = "@testingbot_22"
-debug_channel_id = "@channelforsavingcontent"
+api_id = 22657083
+api_hash = "d6186691704bd901bdab275ceaab88f3"
+bot_token = "8525366225:AAG_nUH9HfmDz8TpBxg-gt2pMDesnfY71L4"
+MONGO_URI = "mongodb+srv://StarGiftBot_db_user:gld1RLm4eYbCWZlC@cluster0.erob6sp.mongodb.net/?appName=Cluster0"
+telegram_database_chat = "@TechyNetwork"
+debug_channel_id = "@TechyNetwork"
 
 
 NOT_SUDO_AD = """
