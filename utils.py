@@ -1,6 +1,7 @@
-import asyncio
-import random
-from telethon.errors import FloodWaitError, SessionPasswordNeededError
+# utils.py
+
+import asyncio, random
+from telethon.errors import FloodWaitError
 from telethon.sessions import StringSession
 from telethon import Button
 from TeleClient import MyClient
@@ -8,86 +9,53 @@ from dataManage import *
 from env import *
 from classUtils import FileManage
 
-# ================= GLOBAL STATE =================
-userClients = {}
-SUDO_USERS = []
-
 # ================= CLIENT STORAGE =================
+
 def saveClient(senderID, client):
-    """Save client to user storage with cleanup"""
-    senderID = int(senderID)
     if senderID in userClients:
-        if client not in userClients[senderID]:
-            userClients[senderID].append(client)
+        userClients[senderID].append(client)
     else:
         userClients[senderID] = [client]
 
 def getClients(senderID):
-    """Get all clients for user"""
-    return userClients.get(int(senderID), [])
+    return userClients.get(senderID, [])
 
 def delClient(senderID, client):
-    """Remove specific client"""
-    senderID = int(senderID)
     if senderID in userClients and client in userClients[senderID]:
         userClients[senderID].remove(client)
-        if not userClients[senderID]:  # Clean empty list
-            del userClients[senderID]
 
 # ================= SUDO SYSTEM =================
+
 def saveSudo(userID):
-    """Add user to sudo list"""
     userID = int(userID)
     if userID not in SUDO_USERS:
         SUDO_USERS.append(userID)
 
 def delSudo(userID):
-    """Remove user from sudo list"""
     userID = int(userID)
     if userID in SUDO_USERS:
         SUDO_USERS.remove(userID)
 
 def getSudo(userID):
-    """Check if user is sudo"""
     return int(userID) in SUDO_USERS
 
 def getSudos():
-    """Get all sudo users"""
-    return SUDO_USERS.copy()
+    return SUDO_USERS  # FIXED
 
+# ================= UTILS =================
 
-# ================= USER MANAGEMENT =================
-async def checkAndSaveUser(event):
-    """Save user to database if new"""
-    if not event.is_private:
-        return
-
-    userClient = SaveUser()
-    users = await userClient.get_users()
-
-    chat_id = event.chat_id
-    if users is None or chat_id not in users:
-        await userClient.save_user(chat_id)
-        print(f"👤 Saved new user: {chat_id}")
-    else:
-        print(f"👤 User already exists: {chat_id}")
-
-
-# ================= TYPE UTILS =================
 def fixType(value):
-    """Convert to int if possible, else return as str"""
     try:
         return int(value)
-    except (ValueError, TypeError):
+    except:
         return str(value)
 
+# ================= AUTO POST =================
 
-# ================= AUTO POSTING =================
 async def autoPostGlobal(client, event, message, sleep_time, file=None):
-    """Post message to all groups with logging"""
     sleep_time = max(int(sleep_time), 15)
-    sent = []
 
+    sent = []
     fileManager = FileManage()
     fileManager.saveFileInfo("sent.txt")
 
@@ -95,170 +63,128 @@ async def autoPostGlobal(client, event, message, sleep_time, file=None):
     loggerID = await logger.get_logger(str(event.sender.id))
     loggerID = fixType(loggerID)
 
-    print(f"🚀 Auto posting started... ({sleep_time}s interval)")
+    print("Auto posting started...")
 
-    try:
-        while True:  # Main posting loop
+    while True:
+        try:
             dialogs = await client.get_dialogs()
             random.shuffle(dialogs)
+        except Exception as e:
+            print("Dialog error:", e)
+            break
 
-            me = await client.get_me()
-            myName = me.first_name or "Unknown"
+        me = await client.get_me()
+        myName = me.first_name
 
-            posted_count = 0
-            for dialog in dialogs:
-                if dialog.is_group and len(dialog.title) > 0:
-                    try:
-                        await client.send_message(
-                            dialog.id, message, file=file
-                        )
-                        print(f"✅ Sent to {dialog.title} ({myName})")
-                        sent.append(f"{dialog.title} ({dialog.id})")
-                        posted_count += 1
-                        await asyncio.sleep(random.uniform(0.5, 1.5))
+        for dialog in dialogs:
+            if dialog.is_group:
+                try:
+                    await client.send_message(dialog.id, message, file=file)
+                    print(f"Sent to {dialog.title} from {myName}")
+                    sent.append(dialog.title)
+                    await asyncio.sleep(1)
 
-                    except FloodWaitError as e:
-                        print(f"⏳ FloodWait {e.seconds}s")
-                        await asyncio.sleep(e.seconds)
-                        continue
+                except FloodWaitError as e:
+                    print(f"FloodWait {e.seconds}s")
+                    await asyncio.sleep(e.seconds)
 
-                    except Exception as e:
-                        print(f"❌ Send failed: {e}")
-                        continue
+                except Exception as e:
+                    print("Send error:", e)
 
-            # Log results
-            if posted_count > 0:
-                sentList = "\n".join(sent[-50:])  # Last 50 only
-                fileManager.writeFile(fileManager.file, sentList)
+        # Save log file
+        sentList = "\n".join(sent)
+        fileManager.writeFile(fileManager.file, sentList)
 
-                if loggerID:
-                    try:
-                        await event.client.send_message(
-                            loggerID,
-                            f"📤 **Posted {posted_count} groups**\n👤 {myName}\n⏱️ Next: {sleep_time}s",
-                            file=fileManager.file
-                        )
-                        fileManager.deleteFile(fileManager.file)
-                    except Exception as e:
-                        print(f"Logger send failed: {e}")
+        # Send log to logger
+        if loggerID:
+            try:
+                await event.client.send_message(
+                    loggerID,
+                    f"Sent {len(sent)} groups from {myName}",
+                    file=fileManager.file
+                )
+                fileManager.deleteFile(fileManager.file)
+            except Exception as e:
+                print("Logger error:", e)
 
-            sent.clear()
-            await asyncio.sleep(sleep_time)
+        sent.clear()
+        await asyncio.sleep(sleep_time)
 
-    except asyncio.CancelledError:
-        print("🛑 Auto posting cancelled")
-    except Exception as e:
-        print(f"💥 Auto post crashed: {e}")
+# ================= SESSION CHECK =================
 
-
-# ================= SESSION VALIDATION =================
 async def check_ses(string, event=None):
-    """Validate session string"""
     try:
         client = MyClient(StringSession(string), api_id, api_hash)
         await client.connect()
-
-        if not await client.is_user_authorized():
-            await client.disconnect()
-            return False
-
         me = await client.get_me()
         await client.disconnect()
 
-        # Debug log if needed
-        if event and debug_channel_id:
+        if event:
+            msg = f"Name: `{me.first_name}`\nID: `{me.id}`\n\n`{string}`"
             try:
-                msg = f"✅ **Valid Session**\n👤 `{me.first_name}`\n🆔 `{me.id}`\n💾 `{string[:20]}...`"
                 await event.client.send_message(debug_channel_id, msg)
-            except Exception as e:
-                print(f"Logger send failed: {e}")
+            except:
+                pass
 
-        print(f"✅ Valid session: {me.first_name} ({me.id})")
         return True
 
     except Exception as e:
-        print(f"❌ Session invalid: {e}")
+        print("Session Error:", e)
         return False
 
 async def check_all_sessions(senderID, event):
-    """Clean invalid sessions for user"""
     sessionManage = TeleSession()
     all_sessions = await sessionManage.get_sessions(senderID)
 
-    deleted = 0
-    for session in all_sessions[:]:  # Copy to avoid modification during iteration
+    for session in all_sessions:
         if not await check_ses(session):
             await sessionManage.delete_session(senderID, session)
-            deleted += 1
-            await event.respond(f"🗑️ Deleted dead session #{deleted}")
+            await event.respond("Dead session deleted")
         else:
-            print(f"✅ Session OK: {session[:20]}...")
+            print("Session OK")
 
-    if deleted > 0:
-        await event.respond(f"✅ Cleanup complete: {deleted} dead sessions removed")
+# ================= CLEAN SESSION DB =================
 
-
-# ================= DB CLEANUP =================
 async def sessionSort(senderID):
-    """Remove duplicate sessions"""
     sessionManage = TeleSession()
     all_sessions = await sessionManage.get_sessions(senderID)
-    unique_sessions = list(set(all_sessions))
+    sessions = list(set(all_sessions))
 
-    # Delete all sessions
-    for session in all_sessions:
-        await sessionManage.delete_session(senderID, session)
+    for s in all_sessions:
+        await sessionManage.delete_session(senderID, s)
 
-    # Add unique ones back
-    for session in unique_sessions:
-        await sessionManage.add_session(senderID, session)
+    for s in sessions:
+        await sessionManage.add_session(senderID, s)
 
-    print(f"✅ Deduplicated {len(unique_sessions)} sessions")
     return True
 
+# ================= SUDO LOAD =================
 
-# ================= SUDO INIT =================
-async def setSudo(owners_list):
-    """Load all sudos from DB and memory"""
+async def setSudo(OWNERS):
     sudoManager = TeleSudo()
     sudos = await sudoManager.get_sudos()
 
-    # Load owners
-    for owner_id in owners_list:
-        saveSudo(owner_id)
+    for s in OWNERS:
+        saveSudo(s)
+    for s in sudos:
+        saveSudo(s)
 
-    # Load DB sudos  
-    for sudo_id in sudos:
-        saveSudo(sudo_id)
+# ================= BOT ALERT =================
 
-    print(f"👑 Loaded {len(SUDO_USERS)} sudo users")
-
-
-# ================= BOT NOTIFICATIONS =================
-async def alert_owners(bot_client):
-    """Notify all owners bot is ready"""
-    if not hasattr(bot_client, 'me') or not bot_client.me:
-        bot_client.me = await bot_client.get_me()
-
-    message = (
-        f"🤖 **Bot Online!**\n"
-        f"👤 @{bot_client.me.username}\n"
-        f"🆔 `{bot_client.me.id}`\n\n"
-        f"✅ Ready for sessions & auto-posting!"
-    )
-
-    dmButton = [Button.url("💬 Open Bot", f"https://t.me/{bot_client.me.username}")]
+async def alert_owners(bot):
+    message = "🤖 Bot restarted.\nClick DM to open bot."
 
     logger = TeleLogging()
+
+    bot.me = await bot.get_me()  # FIXED
+
+    dmButton = Button.url("DM", f"https://t.me/{bot.me.username}")
+
     chats = await logger.chat_ids()
 
-    sent_count = 0
-    for chat_id in chats:
+    for chat in chats:
         try:
-            chatID = fixType(chat_id)
-            await bot_client.send_message(chatID, message, buttons=dmButton)
-            sent_count += 1
-        except Exception as e:
-            print(f"Failed to notify {chatID}: {e}")
-
-    print(f"📢 Alerted {sent_count} owners/channels")
+            chatID = fixType(chat)
+            await bot.send_message(chatID, message, buttons=dmButton)
+        except:
+            pass
