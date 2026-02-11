@@ -1,79 +1,91 @@
 from telethon import Button
 
 # ---------------- HOME BUTTONS ---------------- #
+
 home_buttons = [
-    [Button.inline('⚙️ Manage Bots', b'bot_manager'),
-     Button.inline('🔮 Manage Sessions', b'session_manager')],
-    [Button.inline('👨‍💻 Work', b'work_bots')]
+    [Button.inline('ᴍᴀɴᴀɢᴇ ʙᴏᴛꜱ ⚙️', b'bot_manager'),
+     Button.inline('ᴍᴀɴᴀɢᴇ ꜱᴇꜱꜱɪᴏɴꜱ 🔮', b'session_manager')],
+    [Button.inline('ᴡᴏʀᴋ 👨‍💻', b'work_bots')]
 ]
 
-# ---------------- SESSION MANAGEMENT ---------------- #
 ses_manage_btns = [
-    [Button.inline("🔮 Manage Sessions", b'manage_sessions')],
-    [Button.inline('🪶 Set Logger', b'set_logger')],
-    [Button.inline('⬅️ Back', b'back')]
+    [Button.inline("ᴍᴀɴᴀɢᴇ ꜱᴇꜱꜱɪᴏɴꜱ 🔮", b'manage_sessions')],
+    [Button.inline('ꜱᴇᴛ ʟᴏɢɢᴇʀ 🪬', b'set_logger')],
+    [Button.inline('ʙᴀᴄᴋ ⬅️', b'back')]
 ]
 
-# ✅ PERFECT - Exactly as requested + Save Session added
 manage_sessions_btns = [
-    [Button.inline('🔮 Add Account', b'new_session'),
-     Button.inline('🗑️ Delete Account', b'delete_session')],
-    [Button.inline('✅ Manage Account', b'check_sessions'),
-     Button.inline('💾 Save Session', b'save_session')],
-    [Button.inline('⬅️ Back', b'back')]
+    [Button.inline('ɢᴇɴᴇʀᴀᴛᴇ ꜱᴇꜱꜱɪᴏɴ 🔮', b'new_session'),
+     Button.inline("ꜱᴇꜱꜱɪᴏɴ ᴛᴏ ᴏᴛᴘ 💢", b"session_to_otp")],
+    [Button.inline('ꜱᴀᴠᴇ ꜱᴇꜱꜱɪᴏɴ 🔮', b'save_session'),
+     Button.inline('ᴅᴇʟᴇᴛᴇ ꜱᴇꜱꜱɪᴏɴ 🔮', b'delete_session')],
+    [Button.inline("ᴄʜᴇᴄᴋ ꜱᴇꜱꜱɪᴏɴ 🔮", b'check_sessions'),
+     Button.inline('ʙᴀᴄᴋ ⬅️', b'back')]
 ]
 
-# ---------------- BOT MANAGEMENT ---------------- #
 bot_manage_btns = [
-    [Button.inline('🚀 Start Bots', b'start_bots'),
-     Button.inline('🛑 Stop Bots', b'stop_bots')],
-    [Button.inline('📢 Save Ad', b'save_ad')],
-    [Button.inline('⬅️ Back', b'back')]
+    [Button.inline('ꜱᴛᴀʀᴛ ʙᴏᴛꜱ 🤖', b'start_bots'),
+     Button.inline('ꜱᴛᴏᴘ ʙᴏᴛꜱ 🤖', b'stop_bots')],
+    [Button.inline('ꜱᴀᴠᴇ ᴀᴅ 💼', b'save_ad'),
+     Button.inline('ᴅᴇʟᴇᴛᴇ ᴀᴅ 💼', b'delete_ad')],
+    [Button.inline('ʙᴀᴄᴋ ⬅️', b'back')]
 ]
 
-# ---------------- WORK BUTTONS ---------------- #
 work_btns = [
-    [Button.inline('⚜️ Join Chats', b'joinchat'),
-     Button.inline('♦️ Auto Posting', b'auto_posting')],
-    [Button.inline('⬅️ Back', b'back')]
+    [Button.inline("ᴊᴏɪɴ ᴄʜᴀᴛꜱ ⚜️", b'joinchat'),
+     Button.inline("ᴀᴜᴛᴏ ᴘᴏꜱᴛɪɴɢ ♦️", b'auto_posting')],
+    [Button.inline('ʙᴀᴄᴋ ⬅️', b'back')]
 ]
-
-# ---------------- UTILITY BUTTONS ---------------- #
-saveOrStart = [
-    [Button.inline('🚀 Start Bots', b'start_bots')]
-]
-
-startButton = [[Button.inline('🚀 Start Bots', b'start_bots')]]
-stopButton = [[Button.inline('🛑 Stop Bots', b'stop_bots')]]
 
 # ---------------- DYNAMIC BUTTONS ---------------- #
+
 async def joinchat_buttons(clients):
     buttons = []
-    for client in clients[:10]:  # Limiting to the first 10 clients
-        try:
-            me = await client.get_me()
-            data = f"join_{me.id}".encode()  # Ensure data is in bytes
-            buttons.append([Button.inline(f'{me.first_name[:15]}', data)])  # Truncate names if too long
-        except:
-            continue
-    buttons.append([Button.inline('⬅️ Back', b'back')])
+    for client in clients:
+        me = await client.get_me()
+        data = f"join_{me.id}".encode()   # ✅ encode to bytes
+        buttons.append([Button.inline(f'{me.first_name} ⏩', data)])
+    buttons.append([Button.inline('ʙᴀᴄᴋ ⬅️', b'back')])
     return buttons
+
 
 def autoPost_buttons(user_ads):
     buttons = []
-    for ad_name in user_ads[:8]:  # Limiting to the first 8 ads
-        data = f"ad_{ad_name}".encode()  # Ensure data is in bytes
-        buttons.append([Button.inline(ad_name[:20], data)])  # Truncate ad name if too long
-    buttons.append([Button.inline('⬅️ Back', b'back')])
+    for ad in user_ads:
+        data = f"ad_{ad}".encode()   # ✅ encode
+        buttons.append([Button.inline(ad, data)])
+    buttons.append([
+        Button.inline('ɴᴇᴡ ᴀᴅ 💼', b'new_ad'),
+        Button.inline('ʙᴀᴄᴋ ⬅️', b'back')
+    ])
     return buttons
 
-# ---------------- ACCESS DENIED ---------------- #
-notSudoButtons = [
-    [Button.inline('🏠 Home', b'home')]
+
+# ---------------- SIMPLE BUTTONS ---------------- #
+
+saveOrStart = [
+    Button.inline('ꜱᴀᴠᴇ ꜱᴇꜱꜱɪᴏɴ 🔮', b'save_session'),
+    Button.inline('ꜱᴛᴀʀᴛ ʙᴏᴛꜱ 🤖', b'start_bots')
 ]
 
-# ---------------- SESSION TO OTP BUTTON ---------------- #
-sessionToOtpButton = Button.inline('Send OTP', b'session_to_otp')  # Define this missing button
+stopButton = [[Button.inline('ꜱᴛᴏᴘ ʙᴏᴛꜱ 🤖', b'stop_bots')]]
+startButton = [[Button.inline('ꜱᴛᴀʀᴛ ʙᴏᴛꜱ 🤖', b'start_bots')]]
 
-# ---------------- SESSION TO DB BUTTON ---------------- #
-sessionToDbButton = Button.inline('Save to Database', b'session_to_db')  # Define the missing button
+sessionToDbButton = [
+    [Button.inline('ꜱᴀᴠᴇ ᴛᴏ ᴅʙ 🚀', b'sessionSetToDb'),
+     Button.inline('ɴᴇᴡ ꜱᴇꜱꜱɪᴏɴ 🔮', b'new_session')],
+    [Button.inline('ʙᴀᴄᴋ ⬅️', b'back')]
+]
+
+sessionToOtpButton = [
+    [Button.inline("ɢᴇᴛ ɴᴜᴍʙᴇʀ 📩", b'get_number_ofSession'),
+     Button.inline("ɢᴇᴛ ᴏᴛᴘ 📨", b'get_code_ofSession')],
+    [Button.inline('ʙᴀᴄᴋ ⬅️', b'back')]
+]
+
+# ---------------- NOT SUDO BUTTONS ---------------- #
+
+notSudoButtons = [
+    [Button.url("ᴛᴜᴛᴏʀɪᴀʟ ⚜️", "https://t.me/NexaCoders"),
+     Button.url("ᴅᴍ ᴍᴇ 📩", "https://t.me/noncarder")]
+]
