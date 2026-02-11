@@ -1,4 +1,5 @@
 clients = []
+OWNERS = []
 userClients = {}
 SUDO_USERS = []
 api_id = 22657083
