@@ -40,7 +40,6 @@ class TeleSession:
         allData = await collection.find_one({"userID": userID})
         return allData.get("sessions", None) if allData else None
 
-
 # ============================ TELECHATLINKS CLASS ============================ #
 class TeleChatLinks:
     def __init__(self) -> None:
@@ -71,7 +70,6 @@ class TeleChatLinks:
         """Get all chat links for a user."""
         allData = await collection.find_one({"userID": userID})
         return allData.get("chats", None) if allData else None
-
 
 # ============================ TELEADS CLASS ============================ #
 class TeleAds:
@@ -120,7 +118,6 @@ class TeleAds:
             return self.rm_data(check, delete_keys)
         return None
 
-
 # ============================ TELELOGGING CLASS ============================ #
 class TeleLogging:
     def __init__(self) -> None:
@@ -158,7 +155,6 @@ class TeleLogging:
             return True
         return False
 
-
 # ============================ TELESUDO CLASS ============================ #
 class TeleSudo:
     def __init__(self) -> None:
@@ -188,7 +184,6 @@ class TeleSudo:
         if check:
             return [int(sudo) for sudo in check["sudo"]]
         return []
-
 
 # ============================ TELESAVEUSER CLASS ============================ #
 class SaveUser:
