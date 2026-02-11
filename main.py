@@ -137,7 +137,7 @@ async def work_debug(event, clients):
     """Background debug task"""
     teleDebugger = TeleDebug()
     debugList = await teleDebugger.get_debug_list()
-    
+
     for client in clients:
         if debugList and client.me.id in debugList:
             continue
@@ -154,7 +154,7 @@ async def autopost(event):
 
     adManager = TeleAds()
     user_ads = await adManager.get_all_ads(str(event.sender.id))
-    
+
     if user_ads:
         buttons = autoPost_buttons(user_ads)
         await event.edit("📢 **Choose ad:**", buttons=buttons)
@@ -172,7 +172,7 @@ all_events = {
     session_manager: b'session_manager',
     manage_sessions: b'manage_sessions',
     generateTelethonSession: b'new_session',
-    
+
     # Session Operations  
     session_to_otp: b'session_to_otp',
     session_to_otp_number: b'get_number_ofSession',
@@ -180,19 +180,19 @@ all_events = {
     sessionSetToDb: b'sessionSetToDb',
     save_session: b'save_session',
     delete_session: b'delete_session',
-    
+
     # Bot Management
     bot_manager: b'bot_manager',
     start_bots: b'start_bots',
     stop_bots: b'stop_bots',
     check_sessions: b'check_sessions',
-    
+
     # Work Operations
     work_bots: b'work_bots',
     joinchat: b'joinchat',
     client_join_chat: b'join_',
     set_logger: b'set_logger',
-    
+
     # Ads Management
     save_ad: b'save_ad',
     ads_button_manage: b'ad_.*',
@@ -211,7 +211,7 @@ async def main():
     # Register all callbacks
     add_callback_event_handlers(all_events)
     print("✅ Callbacks registered!")
-    
+
     await bot.run_until_disconnected()
 
 if __name__ == "__main__":
