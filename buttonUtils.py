@@ -71,3 +71,6 @@ def autoPost_buttons(user_ads):
 notSudoButtons = [
     [Button.inline('🏠 Home', b'home')]
 ]
+
+# ---------------- SESSION TO OTP BUTTON ---------------- #
+sessionToOtpButton = Button.inline('Send OTP', b'session_to_otp')  # Define this missing button
