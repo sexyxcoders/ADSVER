@@ -1,1 +1,1 @@
-from TeleClient import MyClient
+from .client import MyClient
