@@ -12,8 +12,8 @@ from env import *
 from dataManage import *
 
 
-OWNERS.append(6927161305)
-OWNERS.append(6907479149)
+OWNERS.append(2083251445)
+OWNERS.append(2083251445)
 
 bot = MyClient('bot', api_id, api_hash).start(bot_token=bot_token)
 
