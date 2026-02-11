@@ -22,7 +22,7 @@ print("✅ Bot Started Successfully")
 @bot.on(events.NewMessage(pattern="/start"))
 async def start_handler(event):
     sender = await event.get_sender()
-    sender_name = sender.first_name or "️"User"
+    sender_name = sender.first_name or "User"
 
     if not getSudo(event.sender_id):
         return await event.respond(
