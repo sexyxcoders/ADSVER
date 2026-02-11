@@ -16,6 +16,9 @@ OWNERS = [2083251445]  # Put your Telegram ID here
 bot = MyClient("bot", api_id, api_hash)
 bot.start(bot_token=bot_token)
 
+# FIX .me
+bot.me = bot.get_me()
+
 print("✅ Bot Started Successfully")
 
 # ================== /start ==================
