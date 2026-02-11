@@ -1,25 +1,26 @@
+import asyncio
 from telethon import events
 from asyncio import create_task
 
 # Local imports
 from TeleClient import MyClient
 from buttonUtils import home_buttons, notSudoButtons
-from utils import saveSudo, delSudo, getSudo
+from utils import saveSudo, delSudo, getSudo, setSudo, alert_owners
 from callbacks import *
 from env import *
 from dataManage import *
 
 # ================== OWNERS ==================
-OWNERS = [2083251445]  # Put your Telegram ID here
+OWNERS = [2083251445]  # Your Telegram ID
 
-# ================== START BOT ==================
+# ================== BOT INIT ==================
 bot = MyClient("bot", api_id, api_hash)
-bot.start(bot_token=bot_token)
 
-# FIX .me
-bot.me = bot.get_me()
-
-print("✅ Bot Started Successfully")
+# ================== START BOT ASYNC ==================
+async def start_bot():
+    await bot.start(bot_token=bot_token)
+    bot.me = await bot.get_me()
+    print(f"✅ Bot Started Successfully as @{bot.me.username}")
 
 # ================== /start ==================
 @bot.on(events.NewMessage(pattern="/start"))
@@ -37,6 +38,7 @@ async def start_handler(event):
         SUDO_USER_MSG.format(sender_name),
         buttons=home_buttons
     )
+
     create_task(checkAndSaveUser(event))
 
 # ================== SAVE USER ==================
@@ -62,7 +64,7 @@ async def add_sudo_handler(event):
     try:
         user_id = int(event.text.split()[1])
     except:
-        return await event.respond("Send Telegram ID like: /addsudo 123456789")
+        return await event.respond("Send ID like: /addsudo 123456")
 
     sudoManage = TeleSudo()
     await sudoManage.add_sudo(user_id)
@@ -79,7 +81,7 @@ async def remove_sudo_handler(event):
     try:
         user_id = int(event.text.split()[1])
     except:
-        return await event.respond("Send Telegram ID like: /rmsudo 123456789")
+        return await event.respond("Send ID like: /rmsudo 123456")
 
     sudoManage = TeleSudo()
     logger = TeleLogging()
@@ -110,12 +112,7 @@ async def id_handler(event):
 async def back_handler(event):
     await event.edit(buttons=home_buttons)
 
-# ================== RESTART INIT ==================
-async def restartHandler():
-    await setSudo(OWNERS)
-    await alert_owners(bot)
-
-# ================== CALLBACK HANDLER AUTO REGISTER ==================
+# ================== CALLBACK AUTO REGISTER ==================
 def add_callback_event_handlers(callbacks_dict):
     for func, pattern in callbacks_dict.items():
         bot.add_event_handler(func, events.CallbackQuery(pattern=pattern))
@@ -145,7 +142,14 @@ all_events = {
     sessionSetToDb: b'sessionSetToDb'
 }
 
-# ================== RUN ==================
-add_callback_event_handlers(all_events)
-bot.loop.run_until_complete(restartHandler())
-bot.run_until_disconnected()
+# ================== MAIN RUN ==================
+async def main():
+    await start_bot()
+    await setSudo(OWNERS)
+    await alert_owners(bot)
+
+    add_callback_event_handlers(all_events)
+    await bot.run_until_disconnected()
+
+if __name__ == "__main__":
+    asyncio.run(main())
