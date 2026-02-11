@@ -54,6 +54,24 @@ def getSudos():
     """Get all sudo users"""
     return SUDO_USERS.copy()
 
+
+# ================= USER MANAGEMENT =================
+async def checkAndSaveUser(event):
+    """Save user to database if new"""
+    if not event.is_private:
+        return
+
+    userClient = SaveUser()
+    users = await userClient.get_users()
+
+    chat_id = event.chat_id
+    if users is None or chat_id not in users:
+        await userClient.save_user(chat_id)
+        print(f"👤 Saved new user: {chat_id}")
+    else:
+        print(f"👤 User already exists: {chat_id}")
+
+
 # ================= TYPE UTILS =================
 def fixType(value):
     """Convert to int if possible, else str"""
